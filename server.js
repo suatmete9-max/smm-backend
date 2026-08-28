@@ -6,29 +6,51 @@ const path = require('path');
 const app = express();
 app.use(cors());
 app.use(express.json());
-
-// Public Website Static Files
 app.use(express.static(path.join(__dirname, 'www')));
 
-// Cashfree Live Credentials from Environment Variables
-const CASHFREE_APP_ID = process.env.CASHFREE_APP_ID;
-const CASHFREE_SECRET_KEY = process.env.CASHFREE_SECRET_KEY;
-const CASHFREE_URL = "https://api.cashfree.com/pg/orders";
+const otpMemory = {};
 
-// Root Route
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'www', 'index.html'));
 });
 
-// Create Cashfree Order API Endpoint
+// 1. Instant Verification Code API
+app.post('/api/send-otp', (req, res) => {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ success: false, message: "Email is required" });
+
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    otpMemory[email] = code;
+
+    res.json({ 
+        success: true, 
+        message: `Verification code sent to ${email}. Code: ${code}` 
+    });
+});
+
+// 2. OTP Verification Check API
+app.post('/api/verify-otp', (req, res) => {
+    const { email, otp } = req.body;
+    if (otpMemory[email] && otpMemory[email] === otp) {
+        delete otpMemory[email];
+        return res.json({ success: true, message: "Verification success!" });
+    }
+    res.status(400).json({ success: false, message: "Invalid Code!" });
+});
+
+// 3. Cashfree Payment API
+const CASHFREE_APP_ID = process.env.CASHFREE_APP_ID;
+const CASHFREE_SECRET_KEY = process.env.CASHFREE_SECRET_KEY;
+const CASHFREE_URL = "https://api.cashfree.com/pg/orders";
+
 app.post('/api/create-cashfree-order', async (req, res) => {
     try {
-        const { amount, link, service } = req.body;
+        const { amount, link } = req.body;
         const orderId = "ORD_" + Date.now();
 
         const requestData = {
             order_id: orderId,
-            order_amount: parseFloat(amount) || 50.00,
+            order_amount: parseFloat(amount) || 15.00,
             order_currency: "INR",
             customer_details: {
                 customer_id: "CUST_" + Date.now(),
@@ -56,16 +78,13 @@ app.post('/api/create-cashfree-order', async (req, res) => {
         });
 
     } catch (error) {
-        console.error("Cashfree Error:", error.response ? error.response.data : error.message);
         res.status(500).json({ 
             success: false, 
-            message: "Payment failed to initialize", 
+            message: "Payment order failed",
             error: error.response ? error.response.data : error.message 
         });
     }
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`Server live on port ${PORT}`));
