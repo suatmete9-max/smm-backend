@@ -1,212 +1,155 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SocialBoost Pro - Ultra Hybrid Dashboard</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Cashfree Web JS SDK v3 -->
-  <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SocialBoost Pro - Hybrid SMM</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
 </head>
-<body class="bg-gray-900 text-white min-h-screen p-4">
+<body class="bg-gray-900 text-white min-h-screen">
 
-  <!-- Top Navigation Header -->
-  <header class="max-w-5xl mx-auto flex justify-between items-center bg-gray-800 p-4 rounded-xl border border-gray-700 mb-6 shadow-lg">
-    <div>
-      <h1 class="text-xl font-bold text-pink-500 flex items-center gap-2">
-        SocialBoost <span class="text-xs bg-yellow-500 text-black px-2 py-0.5 rounded font-bold">PRO HYBRID</span>
-      </h1>
-      <p class="text-xs text-gray-400">Watch, Earn, Boost & Fast Auto-Delivery</p>
-    </div>
-    <div class="text-right">
-      <div class="bg-gray-700 px-3 py-1 rounded-lg text-sm font-bold text-yellow-400 mb-1 border border-yellow-500/30">
-        🪙 Wallet: <span id="coins" class="text-white">100</span> Coins
-      </div>
-      <div class="text-[11px] text-gray-400">
-        ⏳ Pending (24h): <span id="pending" class="text-yellow-500 font-bold">0</span> Coins
-      </div>
-    </div>
-  </header>
+    <!-- LOGIN / SIGNUP MODAL OVERLAY -->
+    <div id="authModal" class="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4">
+        <div class="bg-gray-800 p-8 rounded-2xl max-w-md w-full border border-gray-700 shadow-2xl text-center">
+            <h2 class="text-3xl font-extrabold text-indigo-500 mb-2">SocialBoost PRO</h2>
+            <p class="text-gray-400 mb-6 text-sm">Sign in to access SMM Panel & Earning Dashboard</p>
 
-  <!-- Main Grid Layout -->
-  <main class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Google Login Button -->
+            <button onclick="loginWithGoogle()" class="w-full bg-white text-gray-800 font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-3 mb-4 hover:bg-gray-100 transition">
+                <svg class="w-5 h-5" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
+                Continue with Google
+            </button>
 
-    <!-- CARD 1: REWARDED ADS & DAILY STREAKS -->
-    <div class="bg-gray-800 p-5 rounded-xl border border-gray-700 space-y-4 flex flex-col justify-between">
-      <div>
-        <h2 class="text-base font-bold text-yellow-400 mb-3 flex items-center gap-1">⚡ Free Coins & Ads</h2>
-        
-        <button onclick="claimStreak()" class="w-full bg-gradient-to-r from-yellow-500 to-amber-600 hover:opacity-90 py-2.5 rounded-lg text-xs font-bold text-black transition mb-3">
-          🔥 Claim Daily Streak (+10 Coins)
-        </button>
+            <div class="flex items-center my-4">
+                <div class="flex-grow border-t border-gray-700"></div>
+                <span class="px-3 text-gray-500 text-xs uppercase">OR EMAIL</span>
+                <div class="flex-grow border-t border-gray-700"></div>
+            </div>
 
-        <div class="border-t border-gray-700 pt-3">
-          <p class="text-xs text-gray-400 mb-2">Watch Video Ads for Instant Coins:</p>
-          <button onclick="watchAd('AdMob')" class="w-full bg-indigo-600 hover:bg-indigo-700 py-2 rounded-lg text-xs font-bold mb-2 transition">
-            ▶ AdMob Rewarded Video (+20 Coins)
-          </button>
-          <button onclick="watchAd('Unity')" class="w-full bg-purple-600 hover:bg-purple-700 py-2 rounded-lg text-xs font-bold transition">
-            ▶ Unity Rewarded Video (+20 Coins)
-          </button>
+            <!-- Email Inputs -->
+            <input type="email" id="authEmail" placeholder="Enter your email" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 mb-3 text-white focus:outline-none focus:border-indigo-500">
+            <input type="password" id="authPass" placeholder="Password" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 mb-4 text-white focus:outline-none focus:border-indigo-500">
+
+            <button onclick="loginWithEmail()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition">
+                Login / Register
+            </button>
         </div>
-      </div>
-
-      <!-- Referral Sharing Box -->
-      <div class="border-t border-gray-700 pt-3">
-        <p class="text-xs font-bold mb-1 text-green-400">Your Referral Link:</p>
-        <input type="text" readonly value="https://socialboost.app/ref?id=USER123" class="w-full p-2 bg-gray-900 border border-gray-700 rounded text-xs text-center font-mono text-gray-300">
-        <p class="text-[10px] text-gray-400 mt-1">Get 10% Lifetime Coins Commission on every friend's task earnings!</p>
-      </div>
     </div>
 
-    <!-- CARD 2: AI OCR TASK VERIFIER -->
-    <div class="bg-gray-800 p-5 rounded-xl border border-gray-700 space-y-4">
-      <h2 class="text-base font-bold text-blue-400 mb-1">🔍 Anti-Cheat OCR Task Pool</h2>
-      
-      <div class="bg-gray-900 p-3 rounded-lg border border-gray-700 space-y-2">
-        <div class="flex justify-between items-center text-xs">
-          <span class="font-semibold text-gray-300">Task #109: Instagram Follow</span>
-          <span class="text-green-400 font-bold">+15 Coins</span>
+    <!-- MAIN DASHBOARD (HIDDEN UNTIL LOGIN) -->
+    <div id="mainDashboard" class="hidden container mx-auto p-4">
+        <!-- Top Navigation Header -->
+        <header class="flex justify-between items-center py-4 mb-6 border-b border-gray-800">
+            <div>
+                <h1 class="text-2xl font-bold text-indigo-400">SocialBoost <span class="bg-indigo-900 text-indigo-200 text-xs px-2 py-1 rounded">PRO HYBRID</span></h1>
+                <p id="userWelcome" class="text-xs text-gray-400">Welcome User</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="bg-gray-800 border border-gray-700 px-4 py-2 rounded-xl text-right">
+                    <p class="text-xs text-gray-400">Wallet Balance</p>
+                    <p class="font-bold text-yellow-400"><span id="coinBalance">120</span> Coins</p>
+                </div>
+                <button onclick="logout()" class="bg-red-600/20 text-red-400 border border-red-500/30 px-3 py-2 rounded-xl text-xs hover:bg-red-600/40">Logout</button>
+            </div>
+        </header>
+
+        <!-- Feature Grid -->
+        <div class="grid md:grid-cols-3 gap-6">
+            <!-- Feature 1: Free Coins -->
+            <div class="bg-gray-800 p-6 rounded-2xl border border-gray-700">
+                <h3 class="font-bold text-lg mb-4 text-indigo-400">⚡ Free Coins & Ads</h3>
+                <button onclick="claimStreak()" class="w-full bg-yellow-600/20 border border-yellow-500 text-yellow-300 font-bold py-3 rounded-xl mb-4 hover:bg-yellow-600/30">🔥 Claim Daily Streak (+10 Coins)</button>
+                <div class="space-y-2">
+                    <button onclick="watchAd('AdMob')" class="w-full bg-indigo-900/40 border border-indigo-700 py-2 rounded-lg text-sm hover:bg-indigo-800/40">▶ AdMob Rewarded Video (+20 Coins)</button>
+                    <button onclick="watchAd('Unity')" class="w-full bg-purple-900/40 border border-purple-700 py-2 rounded-lg text-sm hover:bg-purple-800/40">▶ Unity Rewarded Video (+20 Coins)</button>
+                </div>
+            </div>
+
+            <!-- Feature 2: Anti-Cheat Task Pool -->
+            <div class="bg-gray-800 p-6 rounded-2xl border border-gray-700">
+                <h3 class="font-bold text-lg mb-4 text-indigo-400">🔍 Anti-Cheat Task Pool</h3>
+                <div class="bg-gray-900 p-4 rounded-xl mb-4 border border-gray-800">
+                    <p class="text-xs text-gray-400 mb-1">Task #109: Instagram Follow</p>
+                    <a href="https://instagram.com" target="_blank" class="text-indigo-400 text-sm underline font-bold block mb-3">1. Open Profile & Follow Target</a>
+                    <input type="file" id="taskProof" class="w-full text-xs text-gray-400 file:bg-gray-800 file:text-white file:border-0 file:px-3 file:py-2 file:rounded-lg mb-3">
+                    <button onclick="verifyTask()" class="w-full bg-indigo-600 hover:bg-indigo-700 py-2 rounded-lg text-sm font-bold">🤖 AI Scan & Verify</button>
+                </div>
+            </div>
+
+            <!-- Feature 3: Fast Order Boost -->
+            <div class="bg-gray-800 p-6 rounded-2xl border border-gray-700">
+                <h3 class="font-bold text-lg mb-4 text-indigo-400">🚀 Fast Order Boost</h3>
+                <input type="text" id="targetLink" placeholder="Social Link" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm mb-3">
+                <input type="number" id="orderQty" placeholder="Quantity" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm mb-3">
+                <select id="paymentType" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm mb-4">
+                    <option value="cashfree">INR Payment (Cashfree Gateway / UPI)</option>
+                    <option value="coins">Use Wallet Coins</option>
+                </select>
+                <button onclick="processOrder()" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 py-3 rounded-xl font-bold shadow-lg">⚡ Smart Hybrid Delivery</button>
+            </div>
         </div>
-        
-        <a href="https://instagram.com" target="_blank" class="block text-center bg-gray-800 hover:bg-gray-700 border border-pink-500/40 py-1.5 rounded text-xs text-pink-400 font-semibold transition">
-          1. Open Profile & Follow Target
-        </a>
-        
-        <div>
-          <label class="block text-[11px] text-gray-400 mb-1">2. Upload Follow Screenshot (AI Scan):</label>
-          <input type="file" id="screenshot" accept="image/*" class="w-full text-xs text-gray-400 bg-gray-800 p-1 rounded border border-gray-700">
-        </div>
-
-        <button onclick="verifyScreenshot()" class="w-full bg-blue-600 hover:bg-blue-700 py-2 rounded-lg font-bold text-xs transition">
-          🤖 AI Scan & Verify Screenshot
-        </button>
-      </div>
-      <p class="text-[10px] text-gray-500">🔒 Double Security: Username scan automatically verifies follow proof within 1 second.</p>
     </div>
 
-    <!-- CARD 3: SMART HYBRID ORDER CHECKOUT -->
-    <div class="bg-gray-800 p-5 rounded-xl border border-gray-700 space-y-3">
-      <h2 class="text-base font-bold text-pink-400">🚀 Fast Order Boost</h2>
+    <script>
+        const cashfree = Cashfree({ mode: "production" });
 
-      <div>
-        <label class="block text-xs text-gray-300 mb-1">Social Profile / Video Link</label>
-        <input type="text" id="targetLink" placeholder="https://instagram.com/yourname" class="w-full p-2 bg-gray-700 border border-gray-600 rounded text-xs focus:outline-none focus:border-pink-500">
-      </div>
-
-      <div>
-        <label class="block text-xs text-gray-300 mb-1">Quantity</label>
-        <input type="number" id="quantity" value="1000" class="w-full p-2 bg-gray-700 border border-gray-600 rounded text-xs focus:outline-none focus:border-pink-500">
-      </div>
-
-      <div>
-        <label class="block text-xs text-gray-300 mb-1">Payment / Exchange Option</label>
-        <select id="paymentMode" class="w-full p-2 bg-gray-700 border border-gray-600 rounded text-xs focus:outline-none focus:border-pink-500">
-          <option value="inr">INR Payment (Cashfree Gateway / UPI) - Fast Delivery</option>
-          <option value="crypto">Crypto Payment (USDT / BTC) - Worldwide Fast</option>
-          <option value="coins">Coins Exchange Wallet (10,000 Coins)</option>
-        </select>
-      </div>
-
-      <button onclick="placeOrder()" class="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:opacity-90 py-2.5 rounded-lg font-bold text-xs shadow-lg transition mt-2">
-        ⚡ Smart Hybrid Delivery
-      </button>
-
-      <p class="text-[10px] text-gray-400 text-center">80% Instant SMM Routing + 20% High Profit Exchange Pool Engine Active.</p>
-    </div>
-
-  </main>
-
-  <script>
-    let userCoins = 100;
-    const BACKEND_URL = "https://smm-backend-f3e8.onrender.com";
-
-    function claimStreak() {
-      userCoins += 10;
-      document.getElementById('coins').innerText = userCoins;
-      alert("🔥 Daily Streak Bonus: +10 Coins Added!");
-    }
-
-    function watchAd(network) {
-      alert(`Playing ${network} Rewarded Video Ad... Please wait 30 seconds.`);
-      setTimeout(() => {
-        userCoins += 20;
-        document.getElementById('coins').innerText = userCoins;
-        alert(`🎉 ${network} Ad Finished! +20 Coins Credited.`);
-      }, 2000);
-    }
-
-    async function verifyScreenshot() {
-      const fileInput = document.getElementById('screenshot');
-      if (!fileInput.files[0]) {
-        alert("Pehle follow screenshot select karein!");
-        return;
-      }
-
-      const formData = new FormData();
-      formData.append('image', fileInput.files[0]);
-
-      try {
-        const res = await fetch(`${BACKEND_URL}/api/verify-task`, {
-          method: 'POST',
-          body: formData
-        });
-        const data = await res.json();
-        alert("🤖 " + (data.message || "Task Approved!"));
-        document.getElementById('pending').innerText = 15;
-      } catch (err) {
-        alert("Verification completed successfully!");
-        document.getElementById('pending').innerText = 15;
-      }
-    }
-
-    async function placeOrder() {
-      const link = document.getElementById('targetLink').value;
-      const quantity = document.getElementById('quantity').value;
-      const mode = document.getElementById('paymentMode').value;
-
-      if (!link) {
-        alert("Kripya valid Social Link daalein!");
-        return;
-      }
-
-      // Cashfree Gateway Trigger
-      if (mode === 'inr') {
-        try {
-          alert("Initiating Cashfree Payment Gateway...");
-          const res = await fetch(`${BACKEND_URL}/api/create-cashfree-order`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ amount: 10, link: link })
-          });
-          const data = await res.json();
-
-          if (data.success && data.payment_session_id) {
-            const cashfree = Cashfree({ mode: "production" });
-            cashfree.checkout({
-              paymentSessionId: data.payment_session_id,
-              redirectTarget: "_modal"
-            });
-          } else {
-            alert("Payment initialization error: " + (data.message || "Try again"));
-          }
-        } catch (err) {
-          alert("Server Connection Error!");
+        // Auth Logic
+        function loginWithGoogle() {
+            localStorage.setItem("userLoggedIn", "google_user@gmail.com");
+            showDashboard("google_user@gmail.com");
         }
-        return;
-      }
 
-      if (mode === 'coins') {
-        if (userCoins < 10000) {
-          alert("Coins Balance kam hai! Watch Ads ya Cashfree INR se buy karein.");
-          return;
+        function loginWithEmail() {
+            const email = document.getElementById("authEmail").value;
+            if(!email) return alert("Please enter email");
+            localStorage.setItem("userLoggedIn", email);
+            showDashboard(email);
         }
-        userCoins -= 10000;
-        document.getElementById('coins').innerText = userCoins;
-      }
 
-      alert(`⚡ Smart Delivery Initiated for ${link}`);
-    }
-  </script>
+        function logout() {
+            localStorage.removeItem("userLoggedIn");
+            document.getElementById("authModal").classList.remove("hidden");
+            document.getElementById("mainDashboard").classList.add("hidden");
+        }
+
+        function showDashboard(email) {
+            document.getElementById("authModal").classList.add("hidden");
+            document.getElementById("mainDashboard").classList.remove("hidden");
+            document.getElementById("userWelcome").innerText = "Logged in as: " + email;
+        }
+
+        // Auto Check Login Session
+        window.onload = function() {
+            const user = localStorage.getItem("userLoggedIn");
+            if(user) showDashboard(user);
+        };
+
+        // Payment Process
+        async function processOrder() {
+            const mode = document.getElementById("paymentType").value;
+            const link = document.getElementById("targetLink").value;
+            if(!link) return alert("Please enter link!");
+
+            if(mode === "cashfree") {
+                alert("Initiating Cashfree Payment Gateway...");
+                try {
+                    const res = await fetch('/api/create-cashfree-order', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ amount: 10, link: link })
+                    });
+                    const data = await res.json();
+                    if(data.success) {
+                        cashfree.checkout({ paymentSessionId: data.payment_session_id, redirectTarget: "_self" });
+                    } else {
+                        alert("Error: " + data.message);
+                    }
+                } catch(e) { alert("Backend error!"); }
+            } else {
+                alert("Order placed using coins!");
+            }
+        }
+    </script>
 </body>
 </html>
