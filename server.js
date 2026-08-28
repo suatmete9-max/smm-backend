@@ -6,70 +6,49 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Browser Caching Fully Disabled Header Fix
+// Strict Cache Killers
 app.use((req, res, next) => {
-    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
     res.setHeader('Pragma', 'no-cache');
     res.setHeader('Expires', '0');
     next();
 });
 
-// Serve index.html directly from root and www folder
+// Direct Dynamic Binding
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.resolve(__dirname, 'index.html'));
 });
 
-app.use(express.static(__dirname));
-app.use(express.static(path.join(__dirname, 'www')));
+app.use(express.static(path.resolve(__dirname)));
 
-// Real Working OTP System
-const otpStore = {};
+// Dynamic Backend Endpoints
+const otpMap = {};
 
 app.post('/api/send-otp', (req, res) => {
     const { email } = req.body;
-    if (!email) return res.status(400).json({ success: false, message: "Email is required!" });
-
+    if (!email) return res.status(400).json({ success: false, message: "Email required!" });
+    
     const code = Math.floor(100000 + Math.random() * 900000).toString();
-    otpStore[email] = code;
-
-    console.log(`[OTP GENERATED] For ${email} -> ${code}`);
-
-    res.json({ 
-        success: true, 
-        message: `OTP Code Sent: ${code}`,
-        code: code 
-    });
+    otpMap[email] = code;
+    res.json({ success: true, code: code, message: `OTP: ${code}` });
 });
 
 app.post('/api/verify-otp', (req, res) => {
     const { email, otp } = req.body;
-    if (otpStore[email] && otpStore[email] === otp) {
-        delete otpStore[email];
-        return res.json({ success: true, message: "Login successful!" });
+    if (otpMap[email] && otpMap[email] === otp) {
+        delete otpMap[email];
+        return res.json({ success: true });
     }
-    res.status(400).json({ success: false, message: "Invalid OTP Code!" });
+    res.status(400).json({ success: false, message: "Invalid Code!" });
 });
 
-// NPCI Compliant Standard Working UPI Payment Generator
-app.post('/api/create-cashfree-order', async (req, res) => {
-    try {
-        const { amount } = req.body;
-        const cleanAmt = parseFloat(amount || 10).toFixed(2);
-        const orderId = "SB" + Date.now();
-        
-        // Valid NPCI UPI Deep Link String for PhonePe/Paytm/GPay
-        const upiPayload = `upi://pay?pa=9906660144@paytm&pn=SocialBoost&am=${cleanAmt}&cu=INR&tn=Order_${orderId}`;
-
-        res.json({
-            success: true,
-            order_id: orderId,
-            qr_data: upiPayload,
-            amount: cleanAmt
-        });
-    } catch (e) {
-        res.status(500).json({ success: false, message: "Payment Gateway Error" });
-    }
+app.post('/api/create-cashfree-order', (req, res) => {
+    const amount = parseFloat(req.body.amount || 10).toFixed(2);
+    const orderId = "ORD" + Date.now();
+    const upiPayload = `upi://pay?pa=9906660144@paytm&pn=SocialBoost&am=${amount}&cu=INR&tn=${orderId}`;
+    
+    res.json({ success: true, qr_data: upiPayload, amount: amount });
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`SocialBoost backend live on port ${PORT}`));
+app.listen(PORT, () => console.log(`Engine running on ${PORT}`));
