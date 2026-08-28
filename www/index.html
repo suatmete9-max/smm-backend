@@ -9,22 +9,22 @@
 </head>
 <body class="bg-gray-100 font-sans min-h-screen">
 
-    <!-- OTP MODAL POPUP -->
+    <!-- OTP POPUP MODAL -->
     <div id="otpPopup" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 hidden p-4">
         <div class="bg-white p-6 rounded-2xl max-w-sm w-full text-center shadow-2xl">
             <h3 class="font-bold text-xl text-gray-800 mb-1">Enter Verification Code</h3>
-            <p class="text-xs text-blue-600 font-bold mb-4" id="otpNotice">OTP code sent</p>
+            <p class="text-xs text-blue-600 font-bold mb-4" id="otpNotice">OTP code sent to email</p>
             <input type="text" id="otpInputField" placeholder="6-Digit OTP" class="w-full bg-gray-50 border border-gray-300 rounded-xl p-3 text-center text-xl tracking-widest font-bold mb-4 outline-none focus:border-blue-600">
             <button type="button" onclick="verifyLoginOtp()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow-md transition">Verify & Login</button>
             <button type="button" onclick="closePopup('otpPopup')" class="mt-3 text-xs text-gray-400 hover:underline block mx-auto">Cancel</button>
         </div>
     </div>
 
-    <!-- SCAN & PAY QR MODAL -->
+    <!-- SCAN & PAY UPI QR MODAL -->
     <div id="paymentPopup" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 hidden p-4">
         <div class="bg-white p-6 rounded-2xl max-w-sm w-full text-center shadow-2xl">
             <h3 class="font-bold text-xl text-gray-800 mb-1">Scan & Pay via UPI</h3>
-            <p class="text-xs text-gray-500 mb-3">Paytm, PhonePe, GPay, FamPay, Any App</p>
+            <p class="text-xs text-gray-500 mb-3">Paytm, PhonePe, GPay, FamPay, Any UPI App</p>
             <div class="bg-gray-100 p-4 rounded-xl mb-3 flex flex-col items-center">
                 <img id="upiQrCode" src="" alt="Valid UPI QR Code" class="w-52 h-52 border-2 border-blue-500 rounded-xl mb-2 bg-white p-2">
                 <p class="text-xl font-extrabold text-blue-600">Payable Amount: ₹<span id="qrPayAmt">0.00</span></p>
@@ -35,7 +35,7 @@
         </div>
     </div>
 
-    <!-- LANDING & LOGIN PAGE -->
+    <!-- LOGIN / LANDING PAGE -->
     <div id="loginScreen" class="min-h-screen flex flex-col justify-between">
         <nav class="bg-white border-b px-8 py-4 flex justify-between items-center shadow-sm">
             <div class="flex items-center gap-2">
@@ -86,7 +86,7 @@
         <div class="bg-blue-600 h-20 w-full rounded-t-[50%] opacity-80"></div>
     </div>
 
-    <!-- MAIN DASHBOARD -->
+    <!-- DASHBOARD -->
     <div id="dashboardScreen" class="hidden flex min-h-screen">
         <aside class="w-64 bg-blue-600 text-white min-h-screen p-4 flex flex-col justify-between">
             <div>
@@ -231,7 +231,7 @@
             document.getElementById("otpActionBtn").innerText = "Sign in with OTP";
 
             if (data.success) {
-                document.getElementById("otpNotice").innerText = `CODE SENT: ${data.code}`;
+                document.getElementById("otpNotice").innerText = `CODE SENT TO EMAIL: ${data.code}`;
                 document.getElementById("otpPopup").classList.remove("hidden");
             } else {
                 alert(data.message);
@@ -258,7 +258,7 @@
         }
 
         function directGoogleLogin() {
-            const gAccount = "google_user_" + Math.floor(Math.random() * 899 + 100) + "@gmail.com";
+            const gAccount = "user_" + Math.floor(Math.random() * 899 + 100) + "@gmail.com";
             localStorage.setItem("activeSmmUser", gAccount);
             openDashboard(gAccount);
         }
