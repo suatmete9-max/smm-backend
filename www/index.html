@@ -3,40 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SocialBoost Pro - Best SMM Panel</title>
+    <title>SocialBoost Pro - SMM Panel</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body class="bg-gray-100 font-sans min-h-screen">
 
-    <!-- PAYMENT QR CODE MODAL -->
-    <div id="paymentModal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 hidden p-4">
-        <div class="bg-white p-6 rounded-2xl max-w-sm w-full text-center shadow-2xl">
-            <h3 class="font-bold text-xl text-gray-800 mb-1">Scan & Pay via UPI</h3>
-            <p class="text-xs text-gray-500 mb-3">Paytm / PhonePe / GPay / Any UPI App</p>
-            <div class="bg-gray-100 p-4 rounded-xl mb-3 flex flex-col items-center">
-                <img id="qrImage" src="" alt="UPI QR Code" class="w-48 h-48 border rounded-lg mb-2">
-                <p class="text-lg font-extrabold text-blue-600">Amount: ₹<span id="payAmountTxt">0</span></p>
-            </div>
-            <input type="text" id="txnIdInput" placeholder="Enter Transaction ID (UTR)" class="w-full bg-gray-50 border border-gray-300 rounded-xl p-3 text-center text-sm font-bold mb-3 outline-none">
-            <button onclick="confirmPaymentTxn()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl transition">Submit Transaction</button>
-            <button onclick="closeModal('paymentModal')" class="mt-2 text-xs text-gray-400 hover:underline">Cancel</button>
-        </div>
-    </div>
-
-    <!-- OTP POPUP MODAL -->
+    <!-- OTP MODAL -->
     <div id="otpModal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 hidden p-4">
         <div class="bg-white p-6 rounded-2xl max-w-sm w-full text-center shadow-2xl">
-            <h3 class="font-bold text-xl text-gray-800 mb-1">Verify Email OTP</h3>
-            <p class="text-xs text-gray-500 mb-4" id="otpNoticeText">Enter code sent to your email</p>
-            <input type="text" id="inputOtpCode" placeholder="Enter 6-Digit Code" class="w-full bg-gray-50 border border-gray-300 rounded-xl p-3 text-center text-lg tracking-widest font-bold mb-4 outline-none">
-            <button onclick="submitVerifyOtp()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition">Verify & Access Panel</button>
-            <button onclick="closeModal('otpModal')" class="mt-2 text-xs text-gray-400 hover:underline">Cancel</button>
+            <h3 class="font-bold text-xl text-gray-800 mb-1">Enter Verification Code</h3>
+            <p class="text-xs text-gray-500 mb-4" id="otpNotice">OTP code sent to your email</p>
+            <input type="text" id="otpInput" placeholder="Enter 6-Digit OTP" class="w-full bg-gray-50 border border-gray-300 rounded-xl p-3 text-center text-lg tracking-widest font-bold mb-4 outline-none">
+            <button type="button" onclick="verifyOtpCode()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition">Verify & Login</button>
+            <button type="button" onclick="closeOtpModal()" class="mt-2 text-xs text-gray-400 hover:underline block mx-auto">Cancel</button>
         </div>
     </div>
 
-    <!-- LANDING PAGE -->
+    <!-- PAYMENT QR MODAL -->
+    <div id="payModal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 hidden p-4">
+        <div class="bg-white p-6 rounded-2xl max-w-sm w-full text-center shadow-2xl">
+            <h3 class="font-bold text-xl text-gray-800 mb-1">Scan & Pay via UPI</h3>
+            <p class="text-xs text-gray-500 mb-3">Paytm / PhonePe / GPay / Any App</p>
+            <div class="bg-gray-100 p-4 rounded-xl mb-3 flex flex-col items-center">
+                <img id="upiQrImg" src="" alt="QR Code" class="w-48 h-48 border rounded-lg mb-2">
+                <p class="text-lg font-extrabold text-blue-600">Amount: ₹<span id="displayPayAmt">0</span></p>
+            </div>
+            <input type="text" id="utrNumber" placeholder="Enter UTR / Transaction ID" class="w-full bg-gray-50 border border-gray-300 rounded-xl p-3 text-center text-sm font-bold mb-3 outline-none">
+            <button type="button" onclick="submitTransaction()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl transition">Submit Payment</button>
+            <button type="button" onclick="closePayModal()" class="mt-2 text-xs text-gray-400 hover:underline block mx-auto">Cancel</button>
+        </div>
+    </div>
+
+    <!-- LOGIN PAGE -->
     <div id="loginScreen" class="min-h-screen flex flex-col justify-between">
         <nav class="bg-white border-b px-8 py-4 flex justify-between items-center shadow-sm">
             <div class="flex items-center gap-2">
@@ -46,7 +45,6 @@
             <div class="flex gap-6 text-sm font-semibold text-gray-600 items-center">
                 <a href="#" class="text-blue-600"><i class="fa-solid fa-right-to-bracket mr-1"></i> Login</a>
                 <a href="#"><i class="fa-solid fa-user-plus mr-1"></i> Signup</a>
-                <a href="#"><i class="fa-solid fa-list mr-1"></i> Services</a>
             </div>
         </nav>
 
@@ -64,21 +62,25 @@
             <div class="bg-white p-8 rounded-2xl shadow-xl border border-gray-100 w-full max-w-md">
                 <div class="mb-4">
                     <label class="text-xs font-bold text-gray-600 mb-1 block">Email Address</label>
-                    <input type="email" id="loginUser" placeholder="Enter your email" class="w-full bg-green-50/50 border border-green-200 rounded-lg px-4 py-3 text-sm outline-none">
+                    <input type="email" id="userEmail" placeholder="Enter your email" class="w-full bg-green-50/50 border border-green-200 rounded-lg px-4 py-3 text-sm outline-none">
                 </div>
-                <div class="mb-2">
+                <div class="mb-4">
                     <label class="text-xs font-bold text-gray-600 mb-1 block">Password</label>
-                    <input type="password" id="loginPass" placeholder="Enter password" class="w-full bg-green-50/50 border border-green-200 rounded-lg px-4 py-3 text-sm outline-none">
+                    <input type="password" id="userPass" placeholder="Enter password" class="w-full bg-green-50/50 border border-green-200 rounded-lg px-4 py-3 text-sm outline-none">
                 </div>
                 
-                <button onclick="startEmailOtpAuth()" id="loginSubmitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow-md transition mb-4">Sign in with OTP</button>
+                <button type="button" onclick="requestLoginOtp()" id="otpBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow-md transition mb-3">Sign in with OTP</button>
 
-                <!-- REAL GOOGLE ACCOUNT PROMPT -->
-                <div id="g_id_onload"
-                     data-client_id="999999999999-auth.apps.googleusercontent.com"
-                     data-callback="handleCredentialResponse">
+                <div class="relative flex py-2 items-center">
+                    <div class="flex-grow border-t border-gray-200"></div>
+                    <span class="flex-shrink mx-4 text-gray-400 text-xs font-semibold">OR</span>
+                    <div class="flex-grow border-t border-gray-200"></div>
                 </div>
-                <div class="g_id_signin flex justify-center" data-type="standard" data-shape="pill" data-theme="outline" data-text="signin_with" data-size="large"></div>
+
+                <button type="button" onclick="googleLogin()" class="w-full bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-bold py-3 rounded-full flex items-center justify-center gap-3 text-sm transition shadow-sm mt-2">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
+                    Login with Google
+                </button>
             </div>
         </div>
         <div class="bg-blue-600 h-20 w-full rounded-t-[50%] opacity-80"></div>
@@ -93,11 +95,11 @@
                     <span class="text-xl font-bold">SocialBoost</span>
                 </div>
                 <nav class="space-y-2">
-                    <button onclick="switchTab('newOrder')" class="w-full flex items-center gap-3 bg-white text-blue-600 font-bold px-4 py-3 rounded-xl"><i class="fa-solid fa-bag-shopping"></i> New Order</button>
-                    <button onclick="switchTab('addFunds')" class="w-full flex items-center gap-3 hover:bg-blue-700 px-4 py-3 rounded-xl text-blue-100"><i class="fa-solid fa-wallet"></i> Add Funds</button>
+                    <button type="button" onclick="switchNav('newOrder')" class="w-full flex items-center gap-3 bg-white text-blue-600 font-bold px-4 py-3 rounded-xl"><i class="fa-solid fa-bag-shopping"></i> New Order</button>
+                    <button type="button" onclick="switchNav('addFunds')" class="w-full flex items-center gap-3 hover:bg-blue-700 px-4 py-3 rounded-xl text-blue-100"><i class="fa-solid fa-wallet"></i> Add Funds</button>
                 </nav>
             </div>
-            <button onclick="handleLogout()" class="flex items-center gap-3 hover:bg-blue-700 px-4 py-3 rounded-xl text-blue-100"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+            <button type="button" onclick="userLogout()" class="flex items-center gap-3 hover:bg-blue-700 px-4 py-3 rounded-xl text-blue-100"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
         </aside>
 
         <main class="flex-1 bg-gray-50 p-8">
@@ -105,112 +107,122 @@
                 <div class="bg-white p-4 rounded-xl shadow-sm border flex items-center gap-4">
                     <div class="bg-blue-100 p-3 rounded-full text-blue-600"><i class="fa-solid fa-user text-xl"></i></div>
                     <div>
-                        <p id="userAccountName" class="font-bold text-gray-800 text-sm">User</p>
+                        <p id="accountName" class="font-bold text-gray-800 text-sm">User</p>
                         <p class="text-xs text-gray-400">Welcome Back</p>
                     </div>
                 </div>
                 <div class="bg-white p-4 rounded-xl shadow-sm border flex items-center gap-4">
                     <div class="bg-green-100 p-3 rounded-full text-green-600"><i class="fa-solid fa-wallet text-xl"></i></div>
                     <div>
-                        <p class="font-bold text-gray-800 text-lg">₹ <span id="userBalance">0.00</span></p>
+                        <p class="font-bold text-gray-800 text-lg">₹ <span id="userBal">0.00</span></p>
                         <p class="text-xs text-gray-400">Total Balance</p>
                     </div>
                 </div>
             </div>
 
-            <!-- NEW ORDER TAB -->
+            <!-- TAB 1: NEW ORDER -->
             <div id="newOrderView" class="bg-white p-6 rounded-2xl shadow-sm border max-w-2xl">
                 <div class="mb-4">
                     <label class="text-xs font-bold text-gray-500 mb-1 block">Category</label>
-                    <select id="orderCategory" onchange="loadCategoryServices()" class="w-full bg-green-50/40 border border-green-200 rounded-lg p-3 text-sm font-semibold text-gray-700 outline-none">
-                        <option value="ig_nondrop">Instagram Followers (Non Drop) 💯 Refill 365 Days ♻️</option>
-                        <option value="ig_prem">Instagram Followers (Premium) 💎</option>
-                        <option value="fb_all">Facebook Page Followers / Likes</option>
-                        <option value="yt_all">YouTube Subscribers & High Retention Views</option>
+                    <select id="catSelect" onchange="updateServices()" class="w-full bg-green-50/40 border border-green-200 rounded-lg p-3 text-sm font-semibold text-gray-700 outline-none">
+                        <option value="ig_followers">Instagram Followers (Non Drop) 💯 Refill 365 Days ♻️</option>
+                        <option value="fb_likes">Facebook Page Followers / Likes</option>
+                        <option value="yt_subs">YouTube Subscribers & High Retention Views</option>
                     </select>
                 </div>
 
                 <div class="mb-4">
                     <label class="text-xs font-bold text-gray-500 mb-1 block">Services</label>
-                    <select id="orderService" onchange="calculateLiveRate()" class="w-full bg-green-50/40 border border-green-200 rounded-lg p-3 text-sm font-semibold text-gray-700 outline-none"></select>
+                    <select id="servSelect" onchange="calcPrice()" class="w-full bg-green-50/40 border border-green-200 rounded-lg p-3 text-sm font-semibold text-gray-700 outline-none"></select>
                 </div>
 
                 <div class="mb-4">
                     <label class="text-xs font-bold text-gray-500 mb-1 block">Link</label>
-                    <input type="text" id="targetLink" placeholder="https://..." class="w-full bg-green-50/40 border border-green-200 rounded-lg p-3 text-sm outline-none">
+                    <input type="text" id="orderLink" placeholder="https://..." class="w-full bg-green-50/40 border border-green-200 rounded-lg p-3 text-sm outline-none">
                 </div>
 
                 <div class="mb-4">
                     <label class="text-xs font-bold text-gray-500 mb-1 block">Quantity</label>
-                    <input type="number" id="orderQty" value="100" min="100" max="500000" oninput="calculateLiveRate()" class="w-full bg-green-50/40 border border-green-200 rounded-lg p-3 text-sm outline-none">
+                    <input type="number" id="orderQty" value="100" min="100" max="500000" oninput="calcPrice()" class="w-full bg-green-50/40 border border-green-200 rounded-lg p-3 text-sm outline-none">
                 </div>
 
                 <div class="mb-6">
                     <label class="text-xs font-bold text-gray-500 mb-1 block">Charge</label>
                     <div class="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-base font-extrabold text-blue-600">
-                        ₹ <span id="liveCharge">17.45</span>
+                        ₹ <span id="totalCharge">17.45</span>
                     </div>
                 </div>
 
-                <button onclick="placeSmmOrder()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition">Place Order</button>
+                <button type="button" onclick="submitOrder()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition">Place Order</button>
             </div>
 
-            <!-- ADD FUNDS TAB -->
+            <!-- TAB 2: ADD FUNDS -->
             <div id="addFundsView" class="hidden bg-white p-6 rounded-2xl shadow-sm border max-w-2xl">
-                <h3 class="text-xl font-bold text-gray-800 mb-4">Add Funds 🏷️</h3>
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Select Payment Method 🏷️</h3>
+                <div class="mb-4">
+                    <label class="text-xs font-bold text-gray-500 mb-1 block">Payment Gateway</label>
+                    <select id="payGateway" class="w-full bg-green-50/40 border border-green-200 rounded-lg p-3 text-sm font-semibold text-gray-700 outline-none">
+                        <option value="upi">India - [Paytm, PhonePe, Gpay, FamPay, All UPI's]</option>
+                        <option value="binance">Binance Pay / Crypto</option>
+                    </select>
+                </div>
                 <div class="mb-4">
                     <label class="text-xs font-bold text-gray-500 mb-1 block">Amount (INR)</label>
-                    <input type="number" id="fundAmount" value="100" class="w-full bg-green-50/40 border border-green-200 rounded-lg p-3 text-sm outline-none font-bold text-gray-800">
+                    <input type="number" id="amtInput" value="100" class="w-full bg-green-50/40 border border-green-200 rounded-lg p-3 text-sm outline-none font-bold text-gray-800">
                 </div>
-                <button onclick="executeAddFunds()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition">Pay via UPI QR</button>
+                <button type="button" onclick="triggerPayment()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition">Pay & Add Funds Now</button>
             </div>
         </main>
     </div>
 
     <script>
-        const fullServiceList = {
-            ig_nondrop: [{ name: "241 - Instagram Followers - UltraFast ⚡ - ₹ 174.48", rate: 174.48 }],
-            ig_prem: [{ name: "501 - Instagram 50K Followers Package ✅ - ₹ 1250.00", rate: 1250.00 }],
-            fb_all: [{ name: "310 - Facebook Page Followers & Likes - ₹ 45.00", rate: 45.00 }],
-            yt_all: [{ name: "401 - YouTube Non-Drop Subscribers - ₹ 180.00", rate: 180.00 }]
+        const servicesData = {
+            ig_followers: [{ name: "241 - Instagram Followers - UltraFast ⚡ - ₹ 174.48", rate: 174.48 }],
+            fb_likes: [{ name: "310 - Facebook Page Followers & Likes - ₹ 45.00", rate: 45.00 }],
+            yt_subs: [{ name: "401 - YouTube Non-Drop Subscribers - ₹ 180.00", rate: 180.00 }]
         };
 
-        function loadCategoryServices() {
-            const cat = document.getElementById("orderCategory").value;
-            const select = document.getElementById("orderService");
+        function updateServices() {
+            const cat = document.getElementById("catSelect").value;
+            const select = document.getElementById("servSelect");
             select.innerHTML = "";
-            fullServiceList[cat].forEach(s => {
+            servicesData[cat].forEach(s => {
                 const opt = document.createElement("option");
                 opt.value = s.rate;
                 opt.innerText = s.name;
                 select.appendChild(opt);
             });
-            calculateLiveRate();
+            calcPrice();
         }
 
-        function calculateLiveRate() {
-            const pricePer1000 = parseFloat(document.getElementById("orderService").value) || 174.48;
+        function calcPrice() {
+            const price = parseFloat(document.getElementById("servSelect").value) || 174.48;
             const qty = parseInt(document.getElementById("orderQty").value) || 0;
-            document.getElementById("liveCharge").innerText = ((pricePer1000 * qty) / 1000).toFixed(2);
+            document.getElementById("totalCharge").innerText = ((price * qty) / 1000).toFixed(2);
         }
 
-        async function startEmailOtpAuth() {
-            const email = document.getElementById("loginUser").value;
-            if(!email) return alert("Please enter email address!");
+        async function requestLoginOtp() {
+            const email = document.getElementById("userEmail").value;
+            if(!email) return alert("Enter email address!");
 
+            document.getElementById("otpBtn").innerText = "Sending Code...";
             const res = await fetch('/api/send-otp', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ email })
             });
             const data = await res.json();
-            alert(data.message);
-            if(data.success) document.getElementById("otpModal").classList.remove("hidden");
+            document.getElementById("otpBtn").innerText = "Sign in with OTP";
+
+            if(data.success) {
+                document.getElementById("otpNotice").innerText = `OTP Sent to ${email}`;
+                document.getElementById("otpModal").classList.remove("hidden");
+            } else alert(data.message);
         }
 
-        async function submitVerifyOtp() {
-            const email = document.getElementById("loginUser").value;
-            const otp = document.getElementById("inputOtpCode").value;
+        async function verifyOtpCode() {
+            const email = document.getElementById("userEmail").value;
+            const otp = document.getElementById("otpInput").value;
 
             const res = await fetch('/api/verify-otp', {
                 method: 'POST',
@@ -221,23 +233,24 @@
             if(data.success) {
                 document.getElementById("otpModal").classList.add("hidden");
                 localStorage.setItem("smmUser", email);
-                showDashboard(email);
+                openPanel(email);
             } else alert("Invalid OTP!");
         }
 
-        function handleCredentialResponse(response) {
-            localStorage.setItem("smmUser", "Google User");
-            showDashboard("Google User");
+        function googleLogin() {
+            const mockEmail = "user_" + Math.floor(Math.random() * 900 + 100) + "@gmail.com";
+            localStorage.setItem("smmUser", mockEmail);
+            openPanel(mockEmail);
         }
 
-        function showDashboard(user) {
+        function openPanel(user) {
             document.getElementById("loginScreen").classList.add("hidden");
             document.getElementById("dashboardScreen").classList.remove("hidden");
-            document.getElementById("userAccountName").innerText = user;
-            loadCategoryServices();
+            document.getElementById("accountName").innerText = user;
+            updateServices();
         }
 
-        function switchTab(tab) {
+        function switchNav(tab) {
             if(tab === 'addFunds') {
                 document.getElementById("newOrderView").classList.add("hidden");
                 document.getElementById("addFundsView").classList.remove("hidden");
@@ -247,25 +260,27 @@
             }
         }
 
-        function closeModal(id) { document.getElementById(id).classList.add("hidden"); }
-        function handleLogout() { localStorage.removeItem("smmUser"); location.reload(); }
+        function closeOtpModal() { document.getElementById("otpModal").classList.add("hidden"); }
+        function closePayModal() { document.getElementById("payModal").classList.add("hidden"); }
+        function userLogout() { localStorage.removeItem("smmUser"); location.reload(); }
 
         window.onload = function() {
             const user = localStorage.getItem("smmUser");
-            if(user) showDashboard(user);
+            if(user) openPanel(user);
         }
 
-        async function placeSmmOrder() {
-            const amount = document.getElementById("liveCharge").innerText;
-            startCheckoutProcess(amount);
+        function submitOrder() {
+            const amt = document.getElementById("totalCharge").innerText;
+            startPayGateway(amt);
         }
 
-        async function executeAddFunds() {
-            const amount = document.getElementById("fundAmount").value;
-            startCheckoutProcess(amount);
+        function triggerPayment() {
+            const amt = document.getElementById("amtInput").value;
+            if(!amt || amt <= 0) return alert("Enter valid amount!");
+            startPayGateway(amt);
         }
 
-        async function startCheckoutProcess(amount) {
+        async function startPayGateway(amount) {
             const res = await fetch('/api/create-cashfree-order', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -273,17 +288,17 @@
             });
             const data = await res.json();
             if(data.success) {
-                document.getElementById("payAmountTxt").innerText = amount;
-                document.getElementById("qrImage").src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(data.qr_data)}`;
-                document.getElementById("paymentModal").classList.remove("hidden");
-            }
+                document.getElementById("displayPayAmt").innerText = amount;
+                document.getElementById("upiQrImg").src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(data.qr_data)}`;
+                document.getElementById("payModal").classList.remove("hidden");
+            } else alert("Payment gateway connection error!");
         }
 
-        function confirmPaymentTxn() {
-            const utr = document.getElementById("txnIdInput").value;
-            if(!utr) return alert("Please enter Transaction ID!");
-            alert("Payment Submitted! Balance will be credited after verification.");
-            document.getElementById("paymentModal").classList.add("hidden");
+        function submitTransaction() {
+            const utr = document.getElementById("utrNumber").value;
+            if(!utr) return alert("Please enter Transaction UTR ID!");
+            alert("Payment Recorded! Balance will be credited upon verification.");
+            document.getElementById("payModal").classList.add("hidden");
         }
     </script>
 </body>
