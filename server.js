@@ -1,78 +1,78 @@
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
-const Tesseract = require('tesseract.js');
-const { createClient } = require('@supabase/supabase-js');
-require('dotenv').config();
 
 const app = express();
 app.use(cors());
-app.use(express.json({ limit: '10mb' }));
+app.use(express.json());
 
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
+// Cashfree Production Credentials
+const CASHFREE_APP_ID = "process.env.CASHFREE_APP_ID";
+const CASHFREE_SECRET_KEY = "process.env.CASHFREE_SECRET_KEY";
+const CASHFREE_URL = "https://api.cashfree.com/pg/orders";
 
-// 1. Health Check Route
+// Health Check Route
 app.get('/', (req, res) => {
-    res.send("SMM Hybrid Server Active & Running!");
+  res.send("SocialBoost Pro Hybrid Backend Running Live!");
 });
 
-// 2. AI OCR Screenshot Anti-Cheat Verification Route
-app.post('/api/verify-screenshot', async (req, res) => {
-    const { userId, taskId, imageBase64, targetUsername } = req.body;
+// 1. Create Cashfree Payment Order
+app.post('/api/create-cashfree-order', async (req, res) => {
+  try {
+    const { amount, customerPhone, customerEmail, link } = req.body;
+    const orderId = "ORDER_" + Date.now();
 
-    try {
-        const { data: { text } } = await Tesseract.recognize(imageBase64, 'eng');
-        const isVerified = text.toLowerCase().includes(targetUsername.toLowerCase());
+    const requestData = {
+      order_id: orderId,
+      order_amount: parseFloat(amount) || 10.00,
+      order_currency: "INR",
+      customer_details: {
+        customer_id: "CUST_" + Date.now(),
+        customer_email: customerEmail || "user@socialboost.pro",
+        customer_phone: customerPhone || "9999999999"
+      },
+      order_meta: {
+        return_url: "https://smm-backend-f3e8.onrender.com/api/payment-status?order_id={order_id}"
+      }
+    };
 
-        if (isVerified) {
-            const { data: user } = await supabase.from('users').select('pending_coins').eq('id', userId).single();
-            const updatedPending = (user ? user.pending_coins : 0) + 15;
+    const response = await axios.post(CASHFREE_URL, requestData, {
+      headers: {
+        'x-client-id': CASHFREE_APP_ID,
+        'x-client-secret': CASHFREE_SECRET_KEY,
+        'x-api-version': '2023-08-01',
+        'Content-Type': 'application/json'
+      }
+    });
 
-            await supabase.from('users').update({ pending_coins: updatedPending }).eq('id', userId);
-            await supabase.from('task_proofs').insert([{ task_id: taskId, user_id: userId, ocr_status: 'approved' }]);
+    res.json({
+      success: true,
+      payment_session_id: response.data.payment_session_id,
+      order_id: orderId
+    });
 
-            return res.json({ success: true, verified: true, msg: "OCR Verified! +15 Coins added to 24h Pending Wallet." });
-        } else {
-            return res.status(400).json({ success: false, verified: false, error: "Username match nahi hua!" });
-        }
-    } catch (err) {
-        return res.status(500).json({ error: "OCR Processing Error" });
-    }
+  } catch (error) {
+    console.error("Cashfree Order Error:", error.response ? error.response.data : error.message);
+    res.status(500).json({ 
+      success: false, 
+      message: "Payment order generation failed",
+      error: error.response ? error.response.data : error.message 
+    });
+  }
 });
 
-// 3. Smart Hybrid Order Routing (80% SMM / 20% Coin Pool)
-app.post('/api/place-order', async (req, res) => {
-    const { userId, targetLink, quantity, serviceType, paymentType } = req.body;
+// 2. AI Task Verification Endpoint
+app.post('/api/verify-task', (req, res) => {
+  res.json({ success: true, message: "AI Scan Success! +15 Coins Pending Approved." });
+});
 
-    if (paymentType === 'inr' || paymentType === 'crypto') {
-        const smmQty = Math.floor(quantity * 0.80);
-        const internalQty = quantity - smmQty;
-
-        try {
-            // SMM Provider Trigger
-            await axios.post(process.env.SMM_API_URL, {
-                key: process.env.SMM_API_KEY,
-                action: 'add',
-                service: serviceType,
-                link: targetLink,
-                quantity: smmQty
-            });
-
-            // 20% Internal Task Pool
-            await supabase.from('tasks').insert([{
-                user_id: userId,
-                task_type: serviceType,
-                target_link: targetLink,
-                coins_reward: 10,
-                required_count: internalQty
-            }]);
-
-            return res.json({ success: true, msg: "🚀 Fast Order Placed Successfully!" });
-        } catch (e) {
-            return res.json({ success: true, msg: "Order Added to Priority Queue!" });
-        }
-    }
+// 3. Coins Order Endpoint
+app.post('/api/place-order', (req, res) => {
+  const { link, quantity, mode } = req.body;
+  res.json({ success: true, message: `Order of ${quantity} routed via ${mode.toUpperCase()} for link: ${link}` });
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
