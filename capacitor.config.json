@@ -1,5 +1,9 @@
 {
-  "appId": "com.socialboost.app",
+  "appId": "com.socialboost.pro",
   "appName": "SocialBoost Pro",
-  "webDir": "www"
+  "webDir": "www",
+  "server": {
+    "url": "https://smm-backend-f3e8.onrender.com",
+    "cleartext": true
+  }
 }

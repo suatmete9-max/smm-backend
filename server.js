@@ -1,19 +1,23 @@
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
+const path = require('path');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Cashfree Production Credentials
-const CASHFREE_APP_ID = "process.env.CASHFREE_APP_ID";
-const CASHFREE_SECRET_KEY = "process.env.CASHFREE_SECRET_KEY";
+// Public Website Files Serve Karein
+app.use(express.static(path.join(__dirname, 'www')));
+
+// Cashfree Credentials Environment Variables Se Load Hoge
+const CASHFREE_APP_ID = process.env.CASHFREE_APP_ID;
+const CASHFREE_SECRET_KEY = process.env.CASHFREE_SECRET_KEY;
 const CASHFREE_URL = "https://api.cashfree.com/pg/orders";
 
-// Health Check Route
+// Main Website Route
 app.get('/', (req, res) => {
-  res.send("SocialBoost Pro Hybrid Backend Running Live!");
+  res.sendFile(path.join(__dirname, 'www', 'index.html'));
 });
 
 // 1. Create Cashfree Payment Order
