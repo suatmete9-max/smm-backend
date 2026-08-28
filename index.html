@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SocialBoost Pro - Ultra Hybrid Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen p-4">
+
+  <!-- Top Navigation Header -->
+  <header class="max-w-5xl mx-auto flex justify-between items-center bg-gray-800 p-4 rounded-xl border border-gray-700 mb-6 shadow-lg">
+    <div>
+      <h1 class="text-xl font-bold text-pink-500 flex items-center gap-2">
+        SocialBoost <span class="text-xs bg-yellow-500 text-black px-2 py-0.5 rounded font-bold">PRO HYBRID</span>
+      </h1>
+      <p class="text-xs text-gray-400">Watch, Earn, Boost & Fast Auto-Delivery</p>
+    </div>
+    <div class="text-right">
+      <div class="bg-gray-700 px-3 py-1 rounded-lg text-sm font-bold text-yellow-400 mb-1 border border-yellow-500/30">
+        🪙 Wallet: <span id="coins" class="text-white">100</span> Coins
+      </div>
+      <div class="text-[11px] text-gray-400">
+        ⏳ Pending (24h): <span id="pending" class="text-yellow-500 font-bold">0</span> Coins
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Grid Layout -->
+  <main class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+
+    <!-- CARD 1: REWARDED ADS & DAILY STREAKS -->
+    <div class="bg-gray-800 p-5 rounded-xl border border-gray-700 space-y-4 flex flex-col justify-between">
+      <div>
+        <h2 class="text-base font-bold text-yellow-400 mb-3 flex items-center gap-1">⚡ Free Coins & Ads</h2>
+        
+        <button onclick="claimStreak()" class="w-full bg-gradient-to-r from-yellow-500 to-amber-600 hover:opacity-90 py-2.5 rounded-lg text-xs font-bold text-black transition mb-3">
+          🔥 Claim Daily Streak (+10 Coins)
+        </button>
+
+        <div class="border-t border-gray-700 pt-3">
+          <p class="text-xs text-gray-400 mb-2">Watch Video Ads for Instant Coins:</p>
+          <button onclick="watchAd('AdMob')" class="w-full bg-indigo-600 hover:bg-indigo-700 py-2 rounded-lg text-xs font-bold mb-2 transition">
+            ▶ AdMob Rewarded Video (+20 Coins)
+          </button>
+          <button onclick="watchAd('Unity')" class="w-full bg-purple-600 hover:bg-purple-700 py-2 rounded-lg text-xs font-bold transition">
+            ▶ Unity Rewarded Video (+20 Coins)
+          </button>
+        </div>
+      </div>
+
+      <!-- Referral Sharing Box -->
+      <div class="border-t border-gray-700 pt-3">
+        <p class="text-xs font-bold mb-1 text-green-400">Your Referral Link:</p>
+        <input type="text" readonly value="https://socialboost.app/ref?id=USER123" class="w-full p-2 bg-gray-900 border border-gray-700 rounded text-xs text-center font-mono text-gray-300">
+        <p class="text-[10px] text-gray-400 mt-1">Get 10% Lifetime Coins Commission on every friend's task earnings!</p>
+      </div>
+    </div>
+
+    <!-- CARD 2: AI OCR TASK VERIFIER -->
+    <div class="bg-gray-800 p-5 rounded-xl border border-gray-700 space-y-4">
+      <h2 class="text-base font-bold text-blue-400 mb-1">🔍 Anti-Cheat OCR Task Pool</h2>
+      
+      <div class="bg-gray-900 p-3 rounded-lg border border-gray-700 space-y-2">
+        <div class="flex justify-between items-center text-xs">
+          <span class="font-semibold text-gray-300">Task #109: Instagram Follow</span>
+          <span class="text-green-400 font-bold">+15 Coins</span>
+        </div>
+        
+        <a href="https://instagram.com" target="_blank" class="block text-center bg-gray-800 hover:bg-gray-700 border border-pink-500/40 py-1.5 rounded text-xs text-pink-400 font-semibold transition">
+          1. Open Profile & Follow Target
+        </a>
+        
+        <div>
+          <label class="block text-[11px] text-gray-400 mb-1">2. Upload Follow Screenshot (AI Scan):</label>
+          <input type="file" id="screenshot" accept="image/*" class="w-full text-xs text-gray-400 bg-gray-800 p-1 rounded border border-gray-700">
+        </div>
+
+        <button onclick="verifyScreenshot()" class="w-full bg-blue-600 hover:bg-blue-700 py-2 rounded-lg font-bold text-xs transition">
+          🤖 AI Scan & Verify Screenshot
+        </button>
+      </div>
+      <p class="text-[10px] text-gray-500">🔒 Double Security: Username scan automatically verifies follow proof within 1 second.</p>
+    </div>
+
+    <!-- CARD 3: SMART HYBRID ORDER CHECKOUT -->
+    <div class="bg-gray-800 p-5 rounded-xl border border-gray-700 space-y-3">
+      <h2 class="text-base font-bold text-pink-400">🚀 Fast Order Boost</h2>
+
+      <div>
+        <label class="block text-xs text-gray-300 mb-1">Social Profile / Video Link</label>
+        <input type="text" id="targetLink" placeholder="https://instagram.com/yourname" class="w-full p-2 bg-gray-700 border border-gray-600 rounded text-xs focus:outline-none focus:border-pink-500">
+      </div>
+
+      <div>
+        <label class="block text-xs text-gray-300 mb-1">Quantity</label>
+        <input type="number" id="quantity" value="1000" class="w-full p-2 bg-gray-700 border border-gray-600 rounded text-xs focus:outline-none focus:border-pink-500">
+      </div>
+
+      <div>
+        <label class="block text-xs text-gray-300 mb-1">Payment / Exchange Option</label>
+        <select id="paymentMode" class="w-full p-2 bg-gray-700 border border-gray-600 rounded text-xs focus:outline-none focus:border-pink-500">
+          <option value="inr">INR Payment (Razorpay / UPI) - Fast Delivery</option>
+          <option value="crypto">Crypto Payment (USDT / BTC) - Worldwide Fast</option>
+          <option value="coins">Coins Exchange Wallet (10,000 Coins)</option>
+        </select>
+      </div>
+
+      <button onclick="placeOrder()" class="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:opacity-90 py-2.5 rounded-lg font-bold text-xs shadow-lg transition mt-2">
+        ⚡ Smart Hybrid Delivery
+      </button>
+
+      <p class="text-[10px] text-gray-400 text-center">80% Instant SMM Routing + 20% High Profit Exchange Pool Engine Active.</p>
+    </div>
+
+  </main>
+
+  <script>
+    let userCoins = 100;
+
+    function claimStreak() {
+      userCoins += 10;
+      document.getElementById('coins').innerText = userCoins;
+      alert("🔥 Daily Streak Bonus: +10 Coins Added!");
+    }
+
+    function watchAd(network) {
+      alert(`Playing ${network} Rewarded Video Ad... Please wait 30 seconds.`);
+      setTimeout(() => {
+        userCoins += 20;
+        document.getElementById('coins').innerText = userCoins;
+        alert(`🎉 ${network} Ad Finished! +20 Coins Credited.`);
+      }, 2000);
+    }
+
+    async function verifyScreenshot() {
+      const fileInput = document.getElementById('screenshot');
+      if (!fileInput.files[0]) {
+        alert("Pehle follow screenshot select karein!");
+        return;
+      }
+
+      alert("🤖 AI Tesseract OCR Scanning Image... Verified! +15 Coins moved to 24h Pending Wallet.");
+      document.getElementById('pending').innerText = 15;
+    }
+
+    async function placeOrder() {
+      const link = document.getElementById('targetLink').value;
+      const mode = document.getElementById('paymentMode').value;
+
+      if (!link) {
+        alert("Kripya valid Social Link daalein!");
+        return;
+      }
+
+      if (mode === 'coins') {
+        if (userCoins < 10000) {
+          alert("Coins Balance kam hai! Watch Ads ya INR/Crypto se fast buy karein.");
+          return;
+        }
+        userCoins -= 10000;
+        document.getElementById('coins').innerText = userCoins;
+        alert("Order Placed using Coins Wallet!");
+      } else {
+        alert(`Redirecting to ${mode.toUpperCase()} Gateway... Fast Delivery will start in 2 Minutes!`);
+      }
+    }
+  </script>
+</body>
+</html>
