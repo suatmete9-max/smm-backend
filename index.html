@@ -10,12 +10,22 @@
 </head>
 <body class="bg-gray-100 font-sans min-h-screen">
 
-    <!-- LOGIN / SIGNUP LANDING PAGE (FOLLOWERS META DESIGN) -->
+    <!-- REAL OTP POPUP MODAL -->
+    <div id="otpModal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 hidden p-4">
+        <div class="bg-white p-6 rounded-2xl max-w-sm w-full text-center shadow-2xl">
+            <h3 class="font-bold text-xl text-gray-800 mb-1">Verify Email OTP</h3>
+            <p class="text-xs text-gray-500 mb-4" id="otpNoticeText">Enter code sent to your email</p>
+            <input type="text" id="inputOtpCode" placeholder="Enter 6-Digit Code" class="w-full bg-gray-50 border border-gray-300 rounded-xl p-3 text-center text-lg tracking-widest font-bold mb-4 outline-none focus:border-blue-500">
+            <button onclick="submitVerifyOtp()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition">Verify & Access Panel</button>
+            <button onclick="closeOtpModal()" class="mt-2 text-xs text-gray-400 hover:underline">Cancel</button>
+        </div>
+    </div>
+
+    <!-- LOGIN LANDING PAGE -->
     <div id="loginScreen" class="min-h-screen flex flex-col justify-between">
-        <!-- Top Navbar -->
         <nav class="bg-white border-b px-8 py-4 flex justify-between items-center shadow-sm">
             <div class="flex items-center gap-2">
-                <div class="bg-blue-500 text-white rounded-full w-10 h-10 flex items-center justify-center font-bold text-xl">SB</div>
+                <div class="bg-blue-600 text-white rounded-full w-10 h-10 flex items-center justify-center font-bold text-xl">SB</div>
                 <span class="text-2xl font-extrabold text-blue-600">SocialBoost</span>
             </div>
             <div class="flex gap-6 text-sm font-semibold text-gray-600 items-center">
@@ -26,7 +36,6 @@
             </div>
         </nav>
 
-        <!-- Main Banner Content -->
         <div class="container mx-auto px-6 py-12 flex flex-col lg:flex-row items-center justify-between gap-12">
             <div class="max-w-xl">
                 <h1 class="text-5xl font-extrabold text-gray-800 leading-tight">
@@ -38,11 +47,10 @@
                 </p>
             </div>
 
-            <!-- Login Box -->
             <div class="bg-white p-8 rounded-2xl shadow-xl border border-gray-100 w-full max-w-md">
                 <div class="mb-4">
-                    <label class="text-xs font-bold text-gray-600 mb-1 block">Username / Email</label>
-                    <input type="text" id="loginUser" placeholder="Enter username or email" class="w-full bg-green-50/50 border border-green-200 rounded-lg px-4 py-3 text-sm outline-none focus:border-blue-500">
+                    <label class="text-xs font-bold text-gray-600 mb-1 block">Email Address</label>
+                    <input type="email" id="loginUser" placeholder="Enter your email" class="w-full bg-green-50/50 border border-green-200 rounded-lg px-4 py-3 text-sm outline-none focus:border-blue-500">
                 </div>
                 <div class="mb-2">
                     <label class="text-xs font-bold text-gray-600 mb-1 block">Password</label>
@@ -52,7 +60,7 @@
                     <a href="#" class="text-xs text-blue-500 font-semibold">Password Lost?</a>
                 </div>
                 
-                <button onclick="handleLogin()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow-md transition mb-3">Sign in</button>
+                <button onclick="startEmailOtpAuth()" id="loginSubmitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow-md transition mb-3">Sign in with OTP</button>
                 
                 <p class="text-xs text-center text-gray-500 mb-4">Don't have an account? <a href="#" class="text-blue-600 font-bold">Signup</a></p>
 
@@ -62,13 +70,11 @@
                 </button>
             </div>
         </div>
-
-        <div class="bg-blue-600 h-24 w-full rounded-t-[50%] opacity-80"></div>
+        <div class="bg-blue-600 h-20 w-full rounded-t-[50%] opacity-80"></div>
     </div>
 
-    <!-- MAIN DASHBOARD (AFTER LOGIN) -->
+    <!-- MAIN DASHBOARD -->
     <div id="dashboardScreen" class="hidden flex min-h-screen">
-        <!-- Left Blue Sidebar -->
         <aside class="w-64 bg-blue-600 text-white min-h-screen p-4 flex flex-col justify-between">
             <div>
                 <div class="flex items-center gap-2 mb-8 px-2">
@@ -76,25 +82,22 @@
                     <span class="text-xl font-bold">SocialBoost</span>
                 </div>
                 <nav class="space-y-2">
-                    <a href="#" class="flex items-center gap-3 bg-white text-blue-600 font-bold px-4 py-3 rounded-xl"><i class="fa-solid fa-bag-shopping"></i> New Order</a>
-                    <a href="#" class="flex items-center gap-3 hover:bg-blue-700 px-4 py-3 rounded-xl text-blue-100"><i class="fa-solid fa-list-check"></i> Orders History</a>
-                    <a href="#" class="flex items-center gap-3 hover:bg-blue-700 px-4 py-3 rounded-xl text-blue-100"><i class="fa-solid fa-server"></i> Services</a>
-                    <a href="#" class="flex items-center gap-3 hover:bg-blue-700 px-4 py-3 rounded-xl text-blue-100"><i class="fa-solid fa-wallet"></i> Add Funds</a>
-                    <a href="#" class="flex items-center gap-3 hover:bg-blue-700 px-4 py-3 rounded-xl text-blue-100"><i class="fa-solid fa-headset"></i> Support</a>
+                    <button onclick="switchTab('newOrder')" class="w-full flex items-center gap-3 bg-white text-blue-600 font-bold px-4 py-3 rounded-xl"><i class="fa-solid fa-bag-shopping"></i> New Order</button>
+                    <button onclick="switchTab('addFunds')" class="w-full flex items-center gap-3 hover:bg-blue-700 px-4 py-3 rounded-xl text-blue-100"><i class="fa-solid fa-wallet"></i> Add Funds</button>
+                    <button onclick="switchTab('newOrder')" class="w-full flex items-center gap-3 hover:bg-blue-700 px-4 py-3 rounded-xl text-blue-100"><i class="fa-solid fa-list-check"></i> Orders History</button>
+                    <button onclick="switchTab('newOrder')" class="w-full flex items-center gap-3 hover:bg-blue-700 px-4 py-3 rounded-xl text-blue-100"><i class="fa-solid fa-headset"></i> Support</button>
                 </nav>
             </div>
             <button onclick="handleLogout()" class="flex items-center gap-3 hover:bg-blue-700 px-4 py-3 rounded-xl text-blue-100"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
         </aside>
 
-        <!-- Main Content Area -->
         <main class="flex-1 bg-gray-50 p-8">
-            <!-- Header Stats Cards -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
                 <div class="bg-white p-4 rounded-xl shadow-sm border flex items-center gap-4">
                     <div class="bg-blue-100 p-3 rounded-full text-blue-600"><i class="fa-solid fa-user text-xl"></i></div>
                     <div>
                         <p id="userAccountName" class="font-bold text-gray-800 text-sm">User</p>
-                        <p class="text-xs text-gray-400">Welcome User</p>
+                        <p class="text-xs text-gray-400">Welcome Back</p>
                     </div>
                 </div>
                 <div class="bg-white p-4 rounded-xl shadow-sm border flex items-center gap-4">
@@ -120,25 +123,27 @@
                 </div>
             </div>
 
-            <!-- New Order Panel -->
-            <div class="bg-white p-6 rounded-2xl shadow-sm border max-w-2xl">
-                <!-- Category Select -->
+            <!-- TAB 1: NEW ORDER PANEL -->
+            <div id="newOrderView" class="bg-white p-6 rounded-2xl shadow-sm border max-w-2xl">
                 <div class="mb-4">
                     <label class="text-xs font-bold text-gray-500 mb-1 block">Category</label>
                     <select id="orderCategory" onchange="loadCategoryServices()" class="w-full bg-green-50/40 border border-green-200 rounded-lg p-3 text-sm font-semibold text-gray-700 outline-none">
-                        <option value="ig">Instagram Followers (Non Drop) 💯 Start : 1 Min [Updated Service]</option>
-                        <option value="fb">Facebook Page Followers / Likes [UltraFast]</option>
-                        <option value="yt">YouTube Subscribers & Monetization Views</option>
+                        <option value="ig_nondrop">Instagram Followers (Non Drop) 💯 Start : 1 Min (Updated Service) Refill 365 Days ♻️</option>
+                        <option value="ig_prem">Instagram Followers (Premium) 💎</option>
+                        <option value="ig_celeb">Instagram Followers Celebrity Choice 💎🎯</option>
+                        <option value="ig_indians">Instagram Followers | Indians IN 🇮🇳</option>
+                        <option value="ig_target">Instagram Followers [Country Targeted] 🌐</option>
+                        <option value="fb_all">Facebook Page Followers / Post Reactions</option>
+                        <option value="yt_all">YouTube Subscribers & High Retention Views</option>
+                        <option value="tg_all">Telegram Channel Members & Post Views</option>
                     </select>
                 </div>
 
-                <!-- Services Select -->
                 <div class="mb-4">
                     <label class="text-xs font-bold text-gray-500 mb-1 block">Services</label>
                     <select id="orderService" onchange="calculateLiveRate()" class="w-full bg-green-50/40 border border-green-200 rounded-lg p-3 text-sm font-semibold text-gray-700 outline-none"></select>
                 </div>
 
-                <!-- Description Box -->
                 <div class="bg-blue-50/50 border border-blue-100 p-4 rounded-xl mb-4 text-xs text-gray-600 space-y-1">
                     <p class="font-bold text-blue-700 mb-1">Service Details : ⚙️</p>
                     <p>✅ Start Ultra FAST [0-10 Min]</p>
@@ -147,20 +152,17 @@
                     <p>✅ Drop : No Drop</p>
                 </div>
 
-                <!-- Target Link Input -->
                 <div class="mb-4">
                     <label class="text-xs font-bold text-gray-500 mb-1 block">Link</label>
-                    <input type="text" id="targetLink" placeholder="https://instagram.com/username" class="w-full bg-green-50/40 border border-green-200 rounded-lg p-3 text-sm outline-none">
+                    <input type="text" id="targetLink" placeholder="https://instagram.com/profile" class="w-full bg-green-50/40 border border-green-200 rounded-lg p-3 text-sm outline-none">
                 </div>
 
-                <!-- Quantity Input -->
                 <div class="mb-4">
                     <label class="text-xs font-bold text-gray-500 mb-1 block">Quantity</label>
-                    <input type="number" id="orderQty" value="1000" min="100" max="500000" oninput="calculateLiveRate()" class="w-full bg-green-50/40 border border-green-200 rounded-lg p-3 text-sm outline-none">
+                    <input type="number" id="orderQty" value="100" min="100" max="500000" oninput="calculateLiveRate()" class="w-full bg-green-50/40 border border-green-200 rounded-lg p-3 text-sm outline-none">
                     <span class="text-[10px] text-gray-400">Min: 100 - Max: 500000</span>
                 </div>
 
-                <!-- Dynamic Calculated Charge -->
                 <div class="mb-6">
                     <label class="text-xs font-bold text-gray-500 mb-1 block">Charge</label>
                     <div class="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-base font-extrabold text-blue-600">
@@ -168,8 +170,30 @@
                     </div>
                 </div>
 
-                <!-- Submit Button -->
                 <button onclick="placeSmmOrder()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition">Place Order</button>
+            </div>
+
+            <!-- TAB 2: ADD FUNDS PANEL -->
+            <div id="addFundsView" class="hidden bg-white p-6 rounded-2xl shadow-sm border max-w-2xl">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Select Payment Method 🏷️</h3>
+                <div class="mb-4">
+                    <label class="text-xs font-bold text-gray-500 mb-1 block">Payment Gateway</label>
+                    <select id="paymentMethod" class="w-full bg-green-50/40 border border-green-200 rounded-lg p-3 text-sm font-semibold text-gray-700 outline-none">
+                        <option value="upi">India - [Paytm, PhonePe, Gpay, FamPay, All UPI's]</option>
+                        <option value="phonepe">India - [PhonePe Only Direct UPI]</option>
+                        <option value="binance">Binance Pay - Auto Min. $1</option>
+                        <option value="crypto">Cryptomus [BTC, USDT, LTC, ETH & Others] Accepted ✅</option>
+                        <option value="jazzcash">JazzCash - Transaction ID Based</option>
+                        <option value="easypaisa">EasyPaisa - Transaction ID Based</option>
+                        <option value="khalti">NP Nepal Khalti - Transaction ID Based</option>
+                        <option value="bank">Bank Transfer [Minimum 5K] 5% Bonus</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="text-xs font-bold text-gray-500 mb-1 block">Amount (INR)</label>
+                    <input type="number" id="fundAmount" value="100" class="w-full bg-green-50/40 border border-green-200 rounded-lg p-3 text-sm outline-none font-bold text-gray-800">
+                </div>
+                <button onclick="executeAddFunds()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition">Pay & Add Funds Now</button>
             </div>
         </main>
     </div>
@@ -177,20 +201,36 @@
     <script>
         const cashfree = Cashfree({ mode: "production" });
 
-        // Platform SMM Rates per 1000 quantity
-        const serviceRates = {
-            ig: [
-                { id: "ig_fol", name: "241 - Instagram Followers - UltraFast ⚡ START 1 Min | Real Old Accounts", pricePer1000: 17.45 },
-                { id: "ig_like", name: "242 - Instagram Post Likes - Instant Super Fast", pricePer1000: 8.50 },
-                { id: "ig_view", name: "243 - Instagram Reel Views - Instant Delivery", pricePer1000: 3.20 }
+        const fullServiceList = {
+            ig_nondrop: [
+                { name: "241 - Instagram Followers - UltraFast ⚡ START 1 Min | Real Old Accounts | 365 Days Refill ♻️ No Drop - ₹ 174.48", rate: 174.48 },
+                { name: "284 - Instagram Followers | Premium Service 💎 1 Year Refill ♻️ - High Quality 🌟 - Anti Update - ₹ 188.00", rate: 188.00 },
+                { name: "242 - Instagram Followers | Premium Service 💎 (Updated Service) ⭐ - 365 Days Refill - ₹ 339.59", rate: 339.59 },
+                { name: "243 - Instagram Followers | 100% Old Account | Lifetime ♻️ - High Quality - ₹ 490.60", rate: 490.60 }
             ],
-            fb: [
-                { id: "fb_fol", name: "310 - Facebook Page Followers & Likes [365 Days Refill]", pricePer1000: 45.00 },
-                { id: "fb_like", name: "311 - Facebook Post Reactions (Like, Love, Wow)", pricePer1000: 12.00 }
+            ig_prem: [
+                { name: "501 - Instagram 50K Followers Package ✅ - ₹ 1250.00", rate: 1250.00 },
+                { name: "502 - Instagram 100K Followers Package ✅ - ₹ 2400.00", rate: 2400.00 }
             ],
-            yt: [
-                { id: "yt_sub", name: "401 - YouTube Non-Drop Subscribers [Monetizable]", pricePer1000: 180.00 },
-                { id: "yt_view", name: "402 - YouTube High Retention Views", pricePer1000: 65.00 }
+            ig_celeb: [
+                { name: "601 - Instagram Followers Celebrity Choice 💎🎯 [Verified Accounts Network] - ₹ 890.00", rate: 890.00 }
+            ],
+            ig_indians: [
+                { name: "701 - Instagram Followers | Real Indians IN 🇮🇳 [Active Users] - ₹ 210.00", rate: 210.00 }
+            ],
+            ig_target: [
+                { name: "801 - Instagram Followers [USA / UK / Country Targeted] 🌐 - ₹ 350.00", rate: 350.00 }
+            ],
+            fb_all: [
+                { name: "310 - Facebook Page Followers & Likes [365 Days Refill] - ₹ 45.00", rate: 45.00 },
+                { name: "311 - Facebook Post Reactions (Like, Love, Wow) - ₹ 12.00", rate: 12.00 }
+            ],
+            yt_all: [
+                { name: "401 - YouTube Non-Drop Subscribers [Monetizable] - ₹ 180.00", rate: 180.00 },
+                { name: "402 - YouTube High Retention Views - ₹ 65.00", rate: 65.00 }
+            ],
+            tg_all: [
+                { name: "901 - Telegram Channel Members [0-5 Min Start] - ₹ 40.00", rate: 40.00 }
             ]
         };
 
@@ -198,31 +238,70 @@
             const cat = document.getElementById("orderCategory").value;
             const select = document.getElementById("orderService");
             select.innerHTML = "";
-            serviceRates[cat].forEach(s => {
+            fullServiceList[cat].forEach(s => {
                 const opt = document.createElement("option");
-                opt.value = s.pricePer1000;
+                opt.value = s.rate;
                 opt.innerText = s.name;
                 select.appendChild(opt);
             });
             calculateLiveRate();
         }
 
-        // Live Rate Calculator
         function calculateLiveRate() {
-            const pricePer1000 = parseFloat(document.getElementById("orderService").value) || 17.45;
+            const pricePer1000 = parseFloat(document.getElementById("orderService").value) || 174.48;
             const qty = parseInt(document.getElementById("orderQty").value) || 0;
-            const totalCharge = (pricePer1000 * (qty / 1000)).toFixed(2);
+            const totalCharge = ((pricePer1000 * qty) / 1000).toFixed(2);
             document.getElementById("liveCharge").innerText = totalCharge;
         }
 
-        function handleLogin() {
-            const user = document.getElementById("loginUser").value || "bhatmehraj888363";
-            localStorage.setItem("smmUser", user);
-            showDashboard(user);
+        async function startEmailOtpAuth() {
+            const email = document.getElementById("loginUser").value;
+            if(!email) return alert("Please enter email address!");
+
+            const btn = document.getElementById("loginSubmitBtn");
+            btn.innerText = "Sending Code...";
+
+            const res = await fetch('/api/send-otp', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email })
+            });
+            const data = await res.json();
+            btn.innerText = "Sign in with OTP";
+
+            if(data.success) {
+                document.getElementById("otpNoticeText").innerText = `OTP code sent to ${email}`;
+                document.getElementById("otpModal").classList.remove("hidden");
+            } else {
+                alert(data.message);
+            }
+        }
+
+        async function submitVerifyOtp() {
+            const email = document.getElementById("loginUser").value;
+            const otp = document.getElementById("inputOtpCode").value;
+
+            const res = await fetch('/api/verify-otp', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email, otp })
+            });
+            const data = await res.json();
+            if(data.success) {
+                document.getElementById("otpModal").classList.add("hidden");
+                localStorage.setItem("smmUser", email);
+                showDashboard(email);
+            } else {
+                alert("Invalid OTP Code!");
+            }
+        }
+
+        function closeOtpModal() {
+            document.getElementById("otpModal").classList.add("hidden");
         }
 
         function handleGoogleAuth() {
-            const googleUser = "google_user_" + Math.floor(Math.random()*100);
+            const googleUser = "user_" + Math.floor(Math.random()*1000) + "@gmail.com";
             localStorage.setItem("smmUser", googleUser);
             showDashboard(googleUser);
         }
@@ -232,6 +311,16 @@
             document.getElementById("dashboardScreen").classList.remove("hidden");
             document.getElementById("userAccountName").innerText = user;
             loadCategoryServices();
+        }
+
+        function switchTab(tab) {
+            if(tab === 'addFunds') {
+                document.getElementById("newOrderView").classList.add("hidden");
+                document.getElementById("addFundsView").classList.remove("hidden");
+            } else {
+                document.getElementById("addFundsView").classList.add("hidden");
+                document.getElementById("newOrderView").classList.remove("hidden");
+            }
         }
 
         function handleLogout() {
@@ -247,18 +336,26 @@
         async function placeSmmOrder() {
             const link = document.getElementById("targetLink").value;
             const amount = document.getElementById("liveCharge").innerText;
-            if(!link) return alert("Please enter profile/video link!");
+            if(!link) return alert("Please enter target link!");
+            await processCashfreePayment(amount, link);
+        }
 
+        async function executeAddFunds() {
+            const amount = document.getElementById("fundAmount").value;
+            await processCashfreePayment(amount, "Add Funds Wallet TopUp");
+        }
+
+        async function processCashfreePayment(amount, target) {
             const res = await fetch('/api/create-cashfree-order', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ amount, link })
+                body: JSON.stringify({ amount, link: target })
             });
             const data = await res.json();
             if(data.success) {
                 cashfree.checkout({ paymentSessionId: data.payment_session_id, redirectTarget: "_self" });
             } else {
-                alert("Payment initiation failed!");
+                alert("Payment initiation failed! Check Cashfree API keys.");
             }
         }
     </script>
